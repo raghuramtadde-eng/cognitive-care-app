@@ -150,7 +150,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   physics: const NeverScrollableScrollPhysics(),
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
-                  childAspectRatio: 1.15,
+                  // Taller than 1.15's cells leave room for a two-line
+                  // title like "Sequence Recall" or "Spot the Change" on a
+                  // narrower real-device screen -- confirmed via a live
+                  // "BOTTOM OVERFLOWED BY 21 PIXELS" report.
+                  childAspectRatio: 0.95,
                   children: [
                     _LevelCard(
                       title: l10n.gameMemoryMatch,
@@ -217,10 +221,15 @@ class _LevelCard extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
+            // maxLines + ellipsis is a hard safety net against any other
+            // screen/font-scale combination still being too tight.
             Text(title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             Text(l10n.levelValueLabel(level),
                 style: const TextStyle(
                     fontSize: 26, fontWeight: FontWeight.bold, color: AppTheme.primary)),
@@ -271,9 +280,19 @@ class _ChartCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                // The title ("{Game} — accuracy trend") is long enough on a
+                // narrower real-device screen to push "Now: Level X" past
+                // the card's right edge -- confirmed via a live "RIGHT
+                // OVERFLOWED BY 31/42 PIXELS" report. Expanded + ellipsis
+                // lets it shrink instead.
+                Expanded(
+                  child: Text(title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                ),
+                const SizedBox(width: 8),
                 Text(l10n.nowLevelLabel(levelLabel),
                     style: const TextStyle(fontSize: 13, color: AppTheme.primary)),
               ],
