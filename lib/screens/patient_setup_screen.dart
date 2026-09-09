@@ -80,9 +80,20 @@ class _PatientSetupScreenState extends State<PatientSetupScreen> {
         leading: IconButton(
           tooltip: l10n.backToRoleSelection,
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (_) => const RoleSelectionScreen()),
-              (route) => false),
+          // Reached two ways: as the mandatory bootstrap screen right after
+          // signup (no previous route -- nothing to pop to, so fall back to
+          // Role Selection), and via "Add Patient" from patients_screen.dart
+          // (a real previous route exists, so back should just return to
+          // that screen instead of blowing away the whole caregiver stack).
+          onPressed: () {
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).pop();
+            } else {
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (_) => const RoleSelectionScreen()),
+                  (route) => false);
+            }
+          },
         ),
       ),
       body: SingleChildScrollView(

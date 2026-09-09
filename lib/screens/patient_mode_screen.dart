@@ -51,6 +51,11 @@ class PatientModeScreen extends StatelessWidget {
         crossAxisCount: 2,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
+        // Without this, cells default to a 1:1 square, which is a few
+        // pixels too short once a two-word label (e.g. "Memory Match")
+        // wraps to two lines on a narrower/denser real-device screen --
+        // confirmed via a live "BOTTOM OVERFLOWED BY 6.0 PIXELS" report.
+        childAspectRatio: 0.85,
         children: [
           _BigTile(
             icon: Icons.grid_view,
@@ -121,11 +126,18 @@ class _BigTile extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 56, color: color),
-              const SizedBox(height: 12),
+              Icon(icon, size: 48, color: color),
+              const SizedBox(height: 8),
+              // maxLines + ellipsis is a hard safety net: even a larger
+              // system font-scale setting (common for elderly users) or an
+              // unusually narrow screen can no longer force this past the
+              // tile's available height, only truncate gracefully.
               Text(label,
                   textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
             ],
           ),

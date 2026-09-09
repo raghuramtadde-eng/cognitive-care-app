@@ -36,6 +36,10 @@ class LanguageSelectionScreen extends StatelessWidget {
           : AppBar(
               title: Text(AppLocalizations.of(context)!.languageTooltip),
               backgroundColor: Colors.transparent,
+              // Same reasoning as role_selection_screen.dart's AppBar --
+              // the theme's white foreground is invisible against this
+              // screen's pale cream Scaffold background.
+              foregroundColor: AppTheme.primary,
               elevation: 0),
       body: SafeArea(
         child: Padding(

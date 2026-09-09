@@ -46,6 +46,10 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
+        // AppBarTheme's foregroundColor (white, for the normal teal AppBar
+        // background used everywhere else) would be nearly invisible against
+        // this screen's pale cream Scaffold background -- override it here.
+        foregroundColor: AppTheme.primary,
         elevation: 0,
         automaticallyImplyLeading: false,
         actions: [
